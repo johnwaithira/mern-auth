@@ -20,7 +20,7 @@ const Navbar = () => {
         toast.success("Logging out....")
         try {
             const res = await fetch("/user/auth/logout", {
-                method: "GET",
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 }
@@ -36,10 +36,10 @@ const Navbar = () => {
             dispatcher(signoutFailure(error.message))
         }
         finally{
-            localStorage.clear();
-            sessionStorage.clear();
+            // localStorage.clear();
+            // sessionStorage.clear();
             toast.success("Logged out!")
-            clearCookie('access_token');
+            // clearCookie('access_token');
         }
     }
     // logout()

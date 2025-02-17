@@ -7,6 +7,6 @@ const authrouter = express.Router()
 authrouter.post('/create', createUser)
 authrouter.post('/login', userLogin)
 authrouter.post('/google', Google)
-authrouter.get('/logout', logout )
+authrouter.post('/logout', logout )
 
 export default authrouter
