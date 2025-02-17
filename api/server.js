@@ -4,6 +4,8 @@ import { connectDB } from './config/db.js'
 import authrouter from './routes/auth.route.js'
 import cookieParser from 'cookie-parser'
 import userrouter from './routes/user.route.js'
+import part from 'path'
+import path from 'path'
 
 dotenv.config()
 
@@ -19,6 +21,12 @@ const port = process.env.PORT || 3000
 app.listen(port, ()=>{
     console.log(`Server started on port ${port}`)
     connectDB()
+})
+
+const __dirname = path.resolve()
+app.use(express.static(path.join(__dirname,"/frontend/dist")))
+app.get("*", (req, res)=>{
+    res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'))
 })
 
 
