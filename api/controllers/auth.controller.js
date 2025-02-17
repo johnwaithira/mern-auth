@@ -23,7 +23,7 @@ const createUser = async (req, res) => {
         const newUser = new User({
             name,
             email,
-            username: name.split(" ").join("").toLowerCase()+Math.random().toString(36).slice(-4),
+            username: name.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-4),
             password: hashedPassword
         })
         await newUser.save();
@@ -66,50 +66,54 @@ const userLogin = async (req, res) => {
         return res.cookie("access_token", token, { httpOnly: true }).status(200).json(rest)
 
     } catch (error) {
-        return  res.status(500).json({ success: false, statuscode : 203 , message: error.message })
+        return res.status(500).json({ success: false, statuscode: 203, message: error.message })
     }
 
 
 }
 
-const Google = async(req, res) =>{
+const Google = async (req, res) => {
     try {
         const user = await User.findOne({ email: req.body.email })
-        if(user){
-            const token = jwt.sign({id : user._id}, process.env.JWT_SECRET)
-            const { password : pass, ...rest } = user._doc
-            return res.cookie('access_token', token, {httpOnly : true}).status(200).json(rest)
-        }else{
+        if (user) {
+            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+            const { password: pass, ...rest } = user._doc
+            return res.cookie('access_token', token, { httpOnly: true }).status(200).json(rest)
+        } else {
             const pwd = Math.random().toString(36).slice(-8)
             const hashPwd = bcryptjs.hashSync(pwd, 10)
             const newUser = new User({
                 name: req.body.name,
-                username: req.body.name.split(" ").join("").toLowerCase()+Math.random().toString(36).slice(-4),
+                username: req.body.name.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-4),
                 email: req.body.email,
-                password : hashPwd
+                password: hashPwd
             })
 
             await newUser.save()
 
-            const token = jwt.sign({id:newUser._id}, process.env.JWT_SECRET)
+            const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET)
             const { password: pass, ...rest } = newUser._doc
             return res.cookie("access_token", token, {
                 httpOnly: true
             }).status(200).json(rest)
         }
-        
+
     } catch (error) {
         return res.status(400).json({
-            success : false,
+            success: false,
             message: `"Failed to Authenticate with google"${error.message}`
         })
     }
 }
 
-const logout = async (req, res, next) =>{
+const logout = async (req, res, next) => {
     try {
-        res.clearCookie("access_token", { httpOnly: true });
-        return res.status(200).json({success : true, message: "Signed out"})
+        res.clearCookie("access_token", {
+            httpOnly: true,
+            secure: true, // Ensure this matches the cookie's secure flag
+            path: '/',
+        });
+        return res.status(200).json({ success: true, message: "Signed out" })
     } catch (error) {
         next(error)
     }
