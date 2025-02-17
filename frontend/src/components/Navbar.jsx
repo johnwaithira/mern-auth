@@ -5,6 +5,7 @@ import { menuOutline } from 'ionicons/icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { signoutStart, signoutFailure, signoutSuccess } from '../redux/user/userSlice'
 import toast from 'react-hot-toast'
+import { clearCookie } from '../utils/cookiesUtil'
 
 const Navbar = () => {
 
@@ -33,6 +34,12 @@ const Navbar = () => {
             return
         } catch (error) {
             dispatcher(signoutFailure(error.message))
+        }
+        finally{
+            localStorage.clear();
+            sessionStorage.clear();
+            toast.success("Logged out!")
+            clearCookie('access_token');
         }
     }
     // logout()
